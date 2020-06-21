@@ -106,7 +106,7 @@ namespace learningCSharp
                 Console.Write(counter);
                 counter++;
             }
-            System.Console.WriteLine();
+            Console.WriteLine();
             //do minimum one time
             counter = 0;
             do
@@ -114,14 +114,14 @@ namespace learningCSharp
                 Console.Write(counter);
                 counter++;
             } while (counter < 10);
-            System.Console.WriteLine();
+            Console.WriteLine();
             for (int row = 1; row < 4; row++)
             {
                 for (char column = 'a'; column < 'd'; column++)
                 {
                     Console.Write($"({row}, {column}) ");
                 }
-                System.Console.WriteLine();
+                Console.WriteLine();
             }
         }
         static void WorkingWithStrings()
@@ -134,7 +134,7 @@ namespace learningCSharp
             {
                 Console.Write(name.ToUpper() + " ");
             }
-            System.Console.WriteLine();
+            Console.WriteLine();
 
             Console.WriteLine($"My name is {names[0]}");
             Console.WriteLine($"I've added {names[2]} and {names[3]} to the list");
@@ -167,7 +167,7 @@ namespace learningCSharp
             {
                 Console.Write(name.ToUpper() + " ");
             }
-            System.Console.WriteLine();
+            Console.WriteLine();
         }
         static void BankingClasses()
         {
@@ -199,6 +199,107 @@ namespace learningCSharp
             }
             Console.WriteLine(account.GetAccountHistory());
         }
+        static void ValueTypes()
+        {
+            ///Simple Types
+            //   int, byte, char, double, bool, etc.
+
+            ///Enum Types
+            ErrorCode none = ErrorCode.None;
+            ErrorCode uk = ErrorCode.Unknown;
+            Console.WriteLine($"{none}:{(int)none}, {uk}:{(int)uk}");
+            Console.WriteLine($"Get ErrorCode from int (if exists): 1:{(ErrorCode)1}, 10:{(ErrorCode)10}");
+
+            ///Struct Types
+            Coords coords = new Coords();
+            Coords home = new Coords("Home", 5, 5);
+            Console.WriteLine(coords);
+            Console.WriteLine(home);
+
+            ///Nullable Types
+            //    T? can be null as well as any value that T can be
+            bool? b1 = null; // can be null, false, true
+            bool b2 = false; // can be false, true but not null
+            System.Console.WriteLine($"b1 {b1}, b2{b2}");
+            int? a = 42;
+            if (a is int valueOfA) //use `is` to both examine and get value
+            {
+                Console.WriteLine($"a is {valueOfA}");
+            }
+            else
+            {
+                Console.WriteLine("a does not have a value");
+            }
+            if (a.HasValue) // or (a != null)
+            {
+                Console.WriteLine($"a is {a.Value}");
+            }
+            else
+            {
+                Console.WriteLine("a does not have a value"); // a.Value here would throw InvalidOperationException
+            }
+            int c = a ?? -1; // conversion, -1 is default if it was null
+            c = a.GetValueOrDefault(-1); // if no argument, gives default value of the type
+            c = (int)a; // throws InvalidOperationException if null
+            Console.WriteLine($"int? is {typeof(int?)} {(IsNullable(typeof(int?)) ? "nullable" : "non nullable")} value type");
+            Console.WriteLine($"int is {(IsNullable(typeof(int)) ? "nullable" : "non-nullable")} value type");
+            bool IsNullable(Type type) => Nullable.GetUnderlyingType(type) != null;
+
+            Console.WriteLine(IsOfNullableType(a));  // output: True
+            Console.WriteLine(IsOfNullableType(c));  // output: False
+            bool IsOfNullableType<T>(T o) // multiple type input
+            {
+                var type = typeof(T);
+                return Nullable.GetUnderlyingType(type) != null; // false if null, null if not a nullable
+            }
+
+            ///Tuples
+            var unnamed = ("one", "two");
+            var named = (first: "one", second: "two");
+            var first = 12.5;
+            var second = 5;
+            var accumulation = (first, second, 3); // tuple projection initializers - named by variable name
+            System.Console.WriteLine($"{unnamed.Item1} {named.Item1} {named.first} {accumulation.first} {accumulation.Item3}");
+            (string a, string b)? nullableTuple = named;
+            (int, (int, int)) nestedTuple = (1, (2, 3));
+            Console.WriteLine(nestedTuple == (1, (2, 3)));
+            (double, long, long) conversion = accumulation;
+            //Various ways to deconstruct
+            // (int count, double sum, double sumOfSquares) = ComputeSumAndSumOfSquares(sequence);
+            // (long count, var sum, var sumOfSquares) = ComputeSumAndSumOfSquares(sequence);
+            // var (sum, sumOfSquares, count) = ComputeSumAndSumOfSquares(sequence);
+            // (sum, sumOfSquares, count) = ComputeSumAndSumOfSquares(sequence); // if already existing variables
+
+
+            ///Boxing and Unboxing
+            //    a value type can be boxed into type `object` or any interface that the value type implements
+            //    this is an expensive process
+            int i = 123;
+            object o = i; // boxing.
+            int j = (int)o;  // unboxing (casting)
+        }
+        enum ErrorCode : ushort //default is int if not specified
+        {
+            None, // by default starts at 0 and counts up
+            Unknown,
+            ConnectionLost = 100,
+            OutlierReading = 200
+        }
+        public struct Coords
+        {
+            public Coords(string name, double x, double y)
+            {
+                NAME = name;
+                X = x;
+                Y = y;
+            }
+
+            public string NAME { get; }
+            public double X { get; }
+            public double Y { get; }
+
+            public override string ToString() => $"{NAME}: ({X}, {Y})";
+        }
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
@@ -210,6 +311,9 @@ namespace learningCSharp
             Loops();
             WorkingWithStrings();
             BankingClasses();
+
+            //Types
+            ValueTypes();
         }
     }
 }

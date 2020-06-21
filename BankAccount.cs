@@ -54,7 +54,7 @@ namespace learningCSharp
         }
         public string GetAccountHistory()
         {
-            var report = new System.Text.StringBuilder();
+            var report = new System.Text.StringBuilder(); // StringBuilder is mutable, unlike string
 
             decimal balance = 0;
             report.AppendLine("------------------------------------------------");
